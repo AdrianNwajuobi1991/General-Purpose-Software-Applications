@@ -46,7 +46,9 @@ public class TranslationZipFileGenerator {
     }
 
     private void completeTranslationWork() {
-        TranslationZipFileGeneratorUtil.calculateTranslatableWords(tzfgsh);
+        tzfgsh.setWordCountToBeTranslated
+        (TranslationZipFileGeneratorUtil.calculateTranslatableWords(tzfgsh));
+        //Continue From Here later
     }
     
 }
