@@ -22,7 +22,7 @@ public class TranslationZipFileGeneratorUtil {
     
     private static int runningTotalCountWords = 0;
     private static int runningTotalDoubleCountLines = 0;
-    private static int runnintTotalErrorLineCount = 0;
+    private static int runningtTotalErrorLineCount = 0;
     /**
      * This method will create the Directory out of a String parameter.
      * @param tzfgsh is the object that holds the state of the Translation Zip
@@ -43,7 +43,7 @@ public class TranslationZipFileGeneratorUtil {
         calculateDoWork(file,"double_lines");
         calculateDoWork(file,"num_Errors");
         int totalTranslatableWordCount = runningTotalCountWords -(
-                runningTotalDoubleCountLines-runnintTotalErrorLineCount);
+                runningTotalDoubleCountLines-runningtTotalErrorLineCount);
         return totalTranslatableWordCount;
     }
         
@@ -82,7 +82,7 @@ public class TranslationZipFileGeneratorUtil {
 
     private static void uisErrorsLinesCount(String lineOfFile) {
        if(lineOfFile.contains("ERRORS".toLowerCase())){//Refine later 
-           runnintTotalErrorLineCount += 1;
+           runningtTotalErrorLineCount += 1;
        }
     }
 
