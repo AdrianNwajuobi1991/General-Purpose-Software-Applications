@@ -19,6 +19,10 @@ import java.util.logging.Logger;
  */
 public class TranslationZipFileGeneratorUtil {
 
+    
+    private static int runningTotalCountWords = 0;
+    private static int runningTotalDoubleCountLines = 0;
+    private static int runnintTotalErrorLineCount = 0;
     /**
      * This method will create the Directory out of a String parameter.
      * @param tzfgsh is the object that holds the state of the Translation Zip
@@ -32,74 +36,54 @@ public class TranslationZipFileGeneratorUtil {
          
     }
 
-    public static void calculateTranslatableWords
+    public static int calculateTranslatableWords
         (TranslationZipFileGeneratorStateHolder tzfgsh) {
         File file = tzfgsh.getExportedKeysFileRef();
-        int totalWordCount = countWords(file);
-        int linesTimesTwo = doubleCountLines(file);
-        int numUISErrorsLines = uisErrorsLinesCount(file);
+        calculateDoWork(file,"total_words");
+        calculateDoWork(file,"double_lines");
+        calculateDoWork(file,"num_Errors");
+        int totalTranslatableWordCount = runningTotalCountWords -(
+                runningTotalDoubleCountLines-runnintTotalErrorLineCount);
+        return totalTranslatableWordCount;
     }
-
-    private static int countWords(File file) {
+        
+    private static void calculateDoWork(File file, String taskToDo){
        String line;
-       int runningTotal = 0;
        try {
             BufferedReader  br = new BufferedReader(new FileReader(file));
             try {
 		while ((line = br.readLine()) != null) {
-                    String []parts = line.split(" ");
-                    for( String part : parts){
-                        runningTotal += 1;        
+                    if (taskToDo.equals("total_words")){
+                        countWords(line);
+                    }else if(taskToDo.equals("double_lines")){
+                        doubleCountLines();
+                    }else if(taskToDo.equals("num_Errors")){
+                        uisErrorsLinesCount(line);
                     }
 		}
-                return runningTotal;
             }catch(IOException e){
                 e.printStackTrace();
             } 
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }
-        return runningTotal;
+    }  
+
+    private static void countWords(String lineOfFile) {
+       String []parts = lineOfFile.split(" ");
+       for(String part : parts){
+           runningTotalCountWords += 1;        
+        }
     }
 
-    private static int doubleCountLines(File file) {
-       String line;
-       int runningTotal = 0;
-       try {
-            BufferedReader  br = new BufferedReader(new FileReader(file));
-            try {
-		while ((line = br.readLine()) != null) {
-                    runningTotal += 1;
-		}
-                return runningTotal;
-            }catch(IOException e){
-                e.printStackTrace();
-            } 
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        }
-        return (runningTotal*2);
+    private static void doubleCountLines() {
+       runningTotalDoubleCountLines += 2;
     }
 
-    private static int uisErrorsLinesCount(File file) {
-       String line;
-       int runningTotal = 0;
-       try {
-            BufferedReader  br = new BufferedReader(new FileReader(file));
-            try {
-		while ((line = br.readLine()) != null) {
-                    if(line.contains("ERRORS".toLowerCase())){ 
-                        runningTotal += 1;
-                    }
-		}
-                return runningTotal;
-            }catch(IOException e){
-                e.printStackTrace();
-            } 
-        }catch(FileNotFoundException e){
-            e.printStackTrace();
-        }
-        return (runningTotal);
+    private static void uisErrorsLinesCount(String lineOfFile) {
+       if(lineOfFile.contains("ERRORS".toLowerCase())){//Refine later 
+           runnintTotalErrorLineCount += 1;
+       }
     }
 
 }
