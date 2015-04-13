@@ -15,7 +15,7 @@ public class TranslationZipFileGeneratorStateHolder {
     private File exportedKeysFileRef = null;
     private int wordCountToBeTranslated = 0;
     private String appNameForBundle = null;
-    private File translationInstructionsFileRef;
+    private File translationInstructionsFileRef = null;
     
 
     public File getExportedKeysFileRef() {
