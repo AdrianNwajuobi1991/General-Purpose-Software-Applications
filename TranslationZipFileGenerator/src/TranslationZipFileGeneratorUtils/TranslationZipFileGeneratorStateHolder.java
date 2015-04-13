@@ -14,13 +14,15 @@ import java.io.File;
 public class TranslationZipFileGeneratorStateHolder {
     private File exportedKeysFileRef = null;
     private int wordCountToBeTranslated = 0;
+    private String appNameForBundle = null;
+    private File translationInstructionsFileRef;
     
 
     public File getExportedKeysFileRef() {
         return exportedKeysFileRef;
     }
 
-    public void setFolderPathFileRef(File file) {
+    public void setExportedKeysFileRef(File file) {
         this.exportedKeysFileRef = file;
     }
     
@@ -32,5 +34,20 @@ public class TranslationZipFileGeneratorStateHolder {
         this.wordCountToBeTranslated = wordCountToBeTranslated;
     }
     
+    public void setAppNameForBundle(String appNameForBundle){
+        this.appNameForBundle = appNameForBundle;
+    }
+    
+    public String getAppNameForBundle(){
+        return appNameForBundle;
+    }
+
+    public void setTranslationsInstructionsFilePath(File file) {
+        this.translationInstructionsFileRef = file;
+    }
+
+    public File getTranslationsInstructionsFilePath() {
+        return translationInstructionsFileRef;
+    }
     
 }

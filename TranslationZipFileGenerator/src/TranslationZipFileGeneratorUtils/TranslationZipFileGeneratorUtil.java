@@ -28,12 +28,11 @@ public class TranslationZipFileGeneratorUtil {
      * @param tzfgsh is the object that holds the state of the Translation Zip
      * File Generator.
      * @param pathString is the String to create the directory from.
+     * @return a file
      */
-    public static void createFileFromPath
-        (TranslationZipFileGeneratorStateHolder tzfgsh, String pathString) {
+    public static File createFileFromPath(String pathString) {
         File file = new File(pathString);       
-        tzfgsh.setFolderPathFileRef(file);
-         
+        return file;     
     }
 
     public static int calculateTranslatableWords
