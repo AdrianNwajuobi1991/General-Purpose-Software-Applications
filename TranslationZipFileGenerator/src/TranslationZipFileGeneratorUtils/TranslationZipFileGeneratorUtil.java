@@ -88,8 +88,8 @@ public class TranslationZipFileGeneratorUtil {
             BufferedReader  br = new BufferedReader(new FileReader(file));
             try {
 		while ((line = br.readLine()) != null) {
-                    if(line.contains("ERRORS")){ //place holder point refine later
-                        
+                    if(line.contains("ERRORS".toLowerCase())){ 
+                        runningTotal += 1;
                     }
 		}
                 return runningTotal;
@@ -99,7 +99,7 @@ public class TranslationZipFileGeneratorUtil {
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }
-        return (runningTotal*2);
+        return (runningTotal);
     }
 
 }
