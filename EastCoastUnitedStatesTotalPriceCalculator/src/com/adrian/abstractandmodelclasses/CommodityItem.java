@@ -2,7 +2,7 @@
  * A general model class representing a general consumer item for purchase. This class can be extended using inheritance and reused in other
  * applications involving consumer items
  */
-package com.adrian.abstractclasses;
+package com.adrian.abstractandmodelclasses;
 
 import com.adrian.interfaces.EastCoastTotalCostCalculator;
 
