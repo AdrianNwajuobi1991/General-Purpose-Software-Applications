@@ -20,7 +20,7 @@ public class DistrictOfColumbiaTotalCostCalculator implements TotalCostCalculato
 	public String calculatePricePlusTax(float basePrice, String commodityName) {
 		// TODO Auto-generated method stub
 		float totalCost = basePrice + (DC_SALES_TAX_RATE * basePrice);
-		return "The total cost of "+ commodityName +"in Washington, DC is "+totalCost;
+		return "The total cost of "+ commodityName +" in Washington, DC is "+"$ "+totalCost+"\n";
 	}
 
 }

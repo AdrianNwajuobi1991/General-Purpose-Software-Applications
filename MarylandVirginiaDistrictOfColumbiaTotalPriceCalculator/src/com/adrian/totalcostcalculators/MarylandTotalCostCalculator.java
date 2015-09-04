@@ -20,7 +20,7 @@ public class MarylandTotalCostCalculator implements TotalCostCalculator {
 	public String calculatePricePlusTax(float basePrice, String commodityName) {
 		// TODO Auto-generated method stub
 		float totalCost = basePrice + (MD_SALES_TAX_RATE * basePrice);
-		return "The total cost of "+ commodityName +"in Maryland is "+totalCost;
+		return "The total cost of "+ commodityName +" in Maryland is "+"$ "+totalCost+"\n";
 	}
 
 }
