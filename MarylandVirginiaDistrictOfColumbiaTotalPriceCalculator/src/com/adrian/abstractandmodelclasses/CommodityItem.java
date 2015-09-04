@@ -4,7 +4,7 @@
  */
 package com.adrian.abstractandmodelclasses;
 
-import com.adrian.interfaces.EastCoastTotalCostCalculator;
+import com.adrian.interfaces.TotalCostCalculator;
 
 /**
  * @author Adrian Nwajuobi
@@ -15,7 +15,7 @@ public class CommodityItem {
 	/**
 	 * eastCoastTaxCalculatorHolds -- is a field that references an instance of
 	 */
-	protected EastCoastTotalCostCalculator eastCoastTotalCostCalculator;
+	protected TotalCostCalculator eastCoastTotalCostCalculator;
 	/**
 	 * basePrice -- is a field to denote the MSRP of the product
 	 */
@@ -25,28 +25,33 @@ public class CommodityItem {
 	/**
 	 * name -- is a field that represents the name of the item
 	 */
-	protected String name;
+	protected String commodityName;
 	
+
+	public CommodityItem(String commodityName, float basePrice){
+		this.commodityName = commodityName;
+		this.basePrice = basePrice;
+	}
 	/**
 	 * doTotalPriceCalculation -- delegates the calculation of the Total Price of an item to the 
 	 * eastCoastTaxCalculator
 	 */
 	public void doTotalPriceCalculation(){
-		calculationStatement =  eastCoastTotalCostCalculator.calculatePricePlusTax(basePrice, name);
+		calculationStatement =  eastCoastTotalCostCalculator.calculatePricePlusTax(basePrice, commodityName);
 	}
 	/**
 	 * 
 	 * @param eastCoastTotalCostCalculator - the reference to the desired total cost calculator to use
 	 * setTotalCostCalculator -- a setter method(mutator) that dynamically sets the total calculator at runtime
 	 */
-	public void setTotalCostCalculator(EastCoastTotalCostCalculator eastCoastTotalCostCalculator){
+	public void setTotalCostCalculator(TotalCostCalculator eastCoastTotalCostCalculator){
 		this.eastCoastTotalCostCalculator = eastCoastTotalCostCalculator;
 	}
 	/**
 	 *  getName -- returns the name of this item.
 	 */
 	public String getName(){
-		return name;
+		return commodityName;
 	}
 	/**
 	 * getCalculationStatement -- returns the statement result of the computation of the total price.

@@ -3,13 +3,13 @@
  */
 package com.adrian.totalcostcalculators;
 
-import com.adrian.interfaces.EastCoastTotalCostCalculator;
+import com.adrian.interfaces.TotalCostCalculator;
 
 /**
  * @author Adrian Nwajuobi
  *
  */
-public class MarylandTotalCostCalculator implements EastCoastTotalCostCalculator {
+public class MarylandTotalCostCalculator implements TotalCostCalculator {
 	
 	private final float MD_SALES_TAX_RATE = 0.06f;
 
