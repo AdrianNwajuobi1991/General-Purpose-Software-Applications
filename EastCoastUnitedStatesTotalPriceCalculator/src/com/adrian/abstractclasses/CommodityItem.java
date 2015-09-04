@@ -1,5 +1,6 @@
 /**
- * A general model class representing A general consumer item for purchase
+ * A general model class representing a general consumer item for purchase. This class can be extended using inheritance and reused in other
+ * applications involving consumer items
  */
 package com.adrian.abstractclasses;
 
@@ -19,6 +20,8 @@ public class CommodityItem {
 	 * basePrice -- is a field to denote the MSRP of the product
 	 */
 	protected float basePrice;
+	
+	protected String calculationStatement;
 	/**
 	 * name -- is a field that represents the name of the item
 	 */
@@ -29,7 +32,7 @@ public class CommodityItem {
 	 * eastCoastTaxCalculator
 	 */
 	public void doTotalPriceCalculation(){
-		eastCoastTotalCostCalculator.calculatePricePlusTax(basePrice);
+		calculationStatement =  eastCoastTotalCostCalculator.calculatePricePlusTax(basePrice, name);
 	}
 	/**
 	 * 
@@ -39,8 +42,15 @@ public class CommodityItem {
 	public void setTotalCostCalculator(EastCoastTotalCostCalculator eastCoastTotalCostCalculator){
 		this.eastCoastTotalCostCalculator = eastCoastTotalCostCalculator;
 	}
-	
+	/**
+	 *  getName -- returns the name of this item.
+	 */
 	public String getName(){
 		return name;
 	}
+	
+	public String getCalculationStatement(){
+		return calculationStatement;
+	}
+	
 }

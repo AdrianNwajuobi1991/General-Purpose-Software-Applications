@@ -9,6 +9,6 @@ package com.adrian.interfaces;
  */
 public interface EastCoastTotalCostCalculator {
 	
-	public float calculatePricePlusTax(float basePrice);
+	public String calculatePricePlusTax(float basePrice, String commodityName);
 	
 }
