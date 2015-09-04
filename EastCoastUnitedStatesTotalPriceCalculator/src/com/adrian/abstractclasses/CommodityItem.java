@@ -48,7 +48,9 @@ public class CommodityItem {
 	public String getName(){
 		return name;
 	}
-	
+	/**
+	 * getCalculationStatement -- returns the statement result of the computation of the total price.
+	 */
 	public String getCalculationStatement(){
 		return calculationStatement;
 	}
