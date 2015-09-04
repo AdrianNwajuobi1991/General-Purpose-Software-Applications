@@ -1,5 +1,5 @@
 /**
- * A general Abstract class representing A general consumer item for purchase
+ * A general model class representing A general consumer item for purchase
  */
 package com.adrian.abstractclasses;
 
@@ -9,7 +9,7 @@ import com.adrian.interfaces.EastCoastTotalCostCalculator;
  * @author Adrian Nwajuobi
  *
  */
-public abstract class CommodityItem {
+public class CommodityItem {
 
 	/**
 	 * eastCoastTaxCalculatorHolds -- is a field that references an instance of
