@@ -40,8 +40,8 @@ public class CommodityItem {
 	}
 	/**
 	 * 
-	 * @param eastCoastTotalCostCalculator - the reference to the desired total cost calculator to use
-	 * setTotalCostCalculator -- a setter method(mutator) that dynamically sets the total calculator at runtime
+	 * @param totalCostCalculator - the reference to the desired total cost calculator to use to 
+	 * dynamically total calculator at runtime
 	 */
 	public void setTotalCostCalculator(TotalCostCalculator totalCostCalculator){
 		this.TotalCostCalculator = totalCostCalculator;
