@@ -17,7 +17,9 @@ public class PriceCalulatorApplication {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		CommodityItem commodityItem = new CommodityItem("PlayStation 4", (float)392.99);
+		String commodityItemArgument = args[0];
+		Float commodityItemPriceAsFloat = Float.parseFloat(args[1]);
+		CommodityItem commodityItem = new CommodityItem(commodityItemArgument, commodityItemPriceAsFloat);
 		CalculationEngine calculationEngine = new CalculationEngine(commodityItem);
 		calculationEngine.calculateGrandTotalMD_VA_DC();
 	}
