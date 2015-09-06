@@ -1,2 +1,2 @@
 # General-Purpose-Software-Applications
-My General purpose software application repository contains various software projects written in C, Java and Python.
+My General purpose software application repository contains various software projects written in C and Java.
