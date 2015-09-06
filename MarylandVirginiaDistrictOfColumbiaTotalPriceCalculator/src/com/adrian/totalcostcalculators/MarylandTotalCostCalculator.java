@@ -3,6 +3,8 @@
  */
 package com.adrian.totalcostcalculators;
 
+import java.math.BigDecimal;
+
 import com.adrian.interfaces.TotalCostCalculator;
 
 /**
@@ -11,7 +13,7 @@ import com.adrian.interfaces.TotalCostCalculator;
  */
 public class MarylandTotalCostCalculator implements TotalCostCalculator {
 	
-	private final float MD_SALES_TAX_RATE = 0.06f;
+	private final float MD_SALES_TAX_RATE = 6e-2f;
 
 	/* (non-Javadoc)
 	 * @see com.adrian.interfaces.EastCoastTotalCostCalculator#calculatePricePlusTax(float)
@@ -20,7 +22,9 @@ public class MarylandTotalCostCalculator implements TotalCostCalculator {
 	public String calculatePricePlusTax(float basePrice, String commodityName) {
 		// TODO Auto-generated method stub
 		float totalCost = basePrice + (MD_SALES_TAX_RATE * basePrice);
-		return "The total cost of "+ commodityName +" in Maryland is "+"$ "+totalCost+"\n";
+		BigDecimal bigDecimal = new BigDecimal(totalCost);
+		bigDecimal = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+		return "The total cost of "+ commodityName +" in Maryland is "+"$ "+bigDecimal.toString()+"\n";
 	}
 
 }

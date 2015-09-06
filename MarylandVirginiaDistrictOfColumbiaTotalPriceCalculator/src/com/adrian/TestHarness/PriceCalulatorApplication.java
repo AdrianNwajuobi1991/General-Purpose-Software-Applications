@@ -7,7 +7,7 @@ import com.adrian.abstractandmodelclasses.CommodityItem;
 import com.adrian.calculationengine.CalculationEngine;
 
 /**
- * @author Adrian
+ * @author Adrian Nwajuobi
  *
  */
 public class PriceCalulatorApplication {

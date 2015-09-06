@@ -11,11 +11,10 @@ import com.adrian.interfaces.TotalCostCalculator;
  *
  */
 public class CommodityItem {
-
 	/**
-	 * eastCoastTaxCalculatorHolds -- is a field that references an instance of
+	 * TotalCostCalculator -- is a field that references an instance of
 	 */
-	protected TotalCostCalculator eastCoastTotalCostCalculator;
+	protected TotalCostCalculator TotalCostCalculator;
 	/**
 	 * basePrice -- is a field to denote the MSRP of the product
 	 */
@@ -34,18 +33,18 @@ public class CommodityItem {
 	}
 	/**
 	 * doTotalPriceCalculation -- delegates the calculation of the Total Price of an item to the 
-	 * eastCoastTaxCalculator
+	 * TotalCostCalculator
 	 */
 	public void doTotalPriceCalculation(){
-		calculationStatement =  eastCoastTotalCostCalculator.calculatePricePlusTax(basePrice, commodityName);
+		calculationStatement =  TotalCostCalculator.calculatePricePlusTax(basePrice, commodityName);
 	}
 	/**
 	 * 
 	 * @param eastCoastTotalCostCalculator - the reference to the desired total cost calculator to use
 	 * setTotalCostCalculator -- a setter method(mutator) that dynamically sets the total calculator at runtime
 	 */
-	public void setTotalCostCalculator(TotalCostCalculator eastCoastTotalCostCalculator){
-		this.eastCoastTotalCostCalculator = eastCoastTotalCostCalculator;
+	public void setTotalCostCalculator(TotalCostCalculator totalCostCalculator){
+		this.TotalCostCalculator = totalCostCalculator;
 	}
 	/**
 	 *  getName -- returns the name of this item.
