@@ -5,4 +5,4 @@
  * @author Adrian
  *
  */
-package com.encoderdecodercomon.interfaces;
+package com.encoderdecodercommon.interfaces;
