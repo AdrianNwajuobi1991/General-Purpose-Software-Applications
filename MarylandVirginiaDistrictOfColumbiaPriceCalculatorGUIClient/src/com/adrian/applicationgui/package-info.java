@@ -5,4 +5,4 @@
  * @author Adrian Nwajuobi
  *
  */
-package com.adrian.ApplicationGUI;
+package com.adrian.applicationgui;

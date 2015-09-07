@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.adrian.ApplicationGUI;
+package com.adrian.applicationgui;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
