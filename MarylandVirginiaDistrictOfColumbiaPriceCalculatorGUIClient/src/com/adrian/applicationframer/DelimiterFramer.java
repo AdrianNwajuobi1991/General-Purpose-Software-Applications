@@ -12,9 +12,9 @@ import com.framercommon.interfaces.Framer;
  * @author Adrian
  *
  */
-public class LengthFramer implements Framer {
+public class DelimiterFramer implements Framer {
 
-	public LengthFramer(InputStream inputStream) {
+	public DelimiterFramer(InputStream inputStream) {
 		// TODO Auto-generated constructor stub
 	}
 

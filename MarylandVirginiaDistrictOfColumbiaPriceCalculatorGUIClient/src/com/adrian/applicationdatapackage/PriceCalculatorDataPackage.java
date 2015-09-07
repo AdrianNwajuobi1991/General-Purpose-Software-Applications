@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.adrian.applicationgui;
+package com.adrian.applicationdatapackage;
 
 import com.encoderdecodercommon.interfaces.DataPackage;
 

@@ -10,7 +10,7 @@ import com.encoderdecodercommon.interfaces.EncoderDecoder;
  * @author Adrian
  *
  */
-public class BinaryEncoderDecoder implements EncoderDecoder {
+public class TextEncoderDecoder implements EncoderDecoder {
 
 	/* (non-Javadoc)
 	 * @see com.encoderdecodercommon.interfaces.EncoderDecoder#encodeToWire(com.encoderdecodercommon.interfaces.DataPackage)
