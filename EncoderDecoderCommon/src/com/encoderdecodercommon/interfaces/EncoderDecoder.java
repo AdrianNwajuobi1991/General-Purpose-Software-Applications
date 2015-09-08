@@ -3,6 +3,8 @@
  */
 package com.encoderdecodercommon.interfaces;
 
+import com.datapackagecommon.interfaces.DataPackage;
+
 /**
  * @author Adrian
  *
@@ -10,6 +12,7 @@ package com.encoderdecodercommon.interfaces;
 public interface EncoderDecoder {
 
 	public byte[] encodeToWire(DataPackage dataPackage);
+	
 	DataPackage decodeFromWire(byte[] inputFromWire);
 	
 }
