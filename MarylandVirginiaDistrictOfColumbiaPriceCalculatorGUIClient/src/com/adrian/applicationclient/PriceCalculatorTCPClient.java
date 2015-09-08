@@ -3,8 +3,8 @@
  */
 package com.adrian.applicationclient;
 
-import com.adrian.applicationencoderdecoder.BinaryEncoderDecoder;
-import com.adrian.applicationframer.LengthFramer;
+import com.adrian.applicationencoderdecoder.TextEncoderDecoder;
+import com.adrian.applicationframer.DelimiterFramer;
 import com.encoderdecodercommon.interfaces.DataPackage;
 import com.guiclient.common.abstractclasses.GenericTCPApplicationClient;
 import com.guiclient.common.beans.ServerDataBean;
@@ -26,12 +26,13 @@ public class PriceCalculatorTCPClient extends GenericTCPApplicationClient {
 	@Override
 	public DataPackage processData() {
 		// TODO Auto-generated method stub
+		/*****************************Sending data below*****************************/
 		establishConnection();
-		applicationEncoderDecoder = new BinaryEncoderDecoder();
-		applicationFramer = new LengthFramer(inputStream);
+		applicationEncoderDecoder = new TextEncoderDecoder();
+		applicationFramer = new DelimiterFramer(inputStream);
 		byte[]encodedData = applicationEncoderDecoder.encodeToWire(dataPackage);
 		applicationFramer.frameData(encodedData, outputStream);
-		/*****************************/
+		/*****************************Receiving data below************************/
 		encodedData = applicationFramer.nextData();
 		dataPackage = applicationEncoderDecoder.decodeFromWire(encodedData);
 		return dataPackage;
