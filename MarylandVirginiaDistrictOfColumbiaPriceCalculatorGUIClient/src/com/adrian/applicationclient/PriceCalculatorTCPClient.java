@@ -3,9 +3,9 @@
  */
 package com.adrian.applicationclient;
 
-import com.adrian.applicationencoderdecoder.TextEncoderDecoder;
-import com.adrian.applicationframer.DelimiterFramer;
-import com.encoderdecodercommon.interfaces.DataPackage;
+import com.encoderdecodercommon.implementations.*;
+import com.framercommon.implementations.*;
+import com.datapackagecommon.interfaces.DataPackage;
 import com.guiclient.common.abstractclasses.GenericTCPApplicationClient;
 import com.guiclient.common.beans.ServerDataBean;
 

@@ -1,10 +1,10 @@
 package com.adrian.testharness;
 
 import com.adrian.applicationclient.PriceCalculatorTCPClient;
-import com.adrian.applicationdatapackage.PriceCalculatorDataPackage;
-import com.encoderdecodercommon.interfaces.DataPackage;
 import com.guiclient.common.abstractclasses.GenericTCPApplicationClient;
 import com.guiclient.common.beans.ServerDataBean;
+import com.datapackagecommon.implementations.PriceCalculatorDataPackage;
+import com.datapackagecommon.interfaces.*;
 
 public class TestHarness {
 
@@ -14,7 +14,8 @@ public class TestHarness {
 		DataPackage dataPackage = new PriceCalculatorDataPackage("PlayStation 4", "392.99", "MD", "");
 		GenericTCPApplicationClient applicationClient = new PriceCalculatorTCPClient(serverDataBean, dataPackage);
 		dataPackage = applicationClient.processData();
-
+		com.datapackagecommon.implementations.PriceCalculatorDataPackage priceCalculatorDataPackage = (com.datapackagecommon.implementations.PriceCalculatorDataPackage)dataPackage;
+		System.out.println(priceCalculatorDataPackage.getItemTotalPrice());
 	}
 
 }

@@ -7,7 +7,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import com.adrian.applicationclient.PriceCalculatorTCPClient;
-import com.encoderdecodercommon.interfaces.DataPackage;
 import com.guiclient.common.beans.ServerDataBean;
 
 /**
@@ -27,7 +26,7 @@ public class PriceCalculatorClientGUI {
 	/**
 	 * The data package to be populated from the GUI text box
 	 */
-	private DataPackage serverDataPackage;
+	private com.datapackagecommon.interfaces.DataPackage serverDataPackage;
 	/**
 	 * The main JFrame of the GUI
 	 */
