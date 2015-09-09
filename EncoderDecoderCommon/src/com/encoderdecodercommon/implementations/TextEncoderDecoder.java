@@ -38,10 +38,11 @@ public class TextEncoderDecoder implements EncoderDecoder {
 	@Override
 	public byte[] encodeToWire(DataPackage dataPackage) {
 		// TODO Auto-generated method stub
-		String dataString = MAGIC + DELIMSTR;
-		for(String str: dataPackage.getDataPackageTokens()){
-			dataString += str + DELIMSTR;
-		}
+		PriceCalculatorDataPackage priceCalculatorDataPackage = (PriceCalculatorDataPackage)dataPackage;
+		String dataString = MAGIC + DELIMSTR + priceCalculatorDataPackage.getItemName() + DELIMSTR + 
+				priceCalculatorDataPackage.getItemBasePrice() + 
+				DELIMSTR + priceCalculatorDataPackage.getState() + DELIMSTR + priceCalculatorDataPackage.getItemTotalPrice();
+		
 		byte encodedData[] = null;
 		try {
 			encodedData = dataString.getBytes(CHARSETNAME);
@@ -75,11 +76,10 @@ public class TextEncoderDecoder implements EncoderDecoder {
 		}
 		String itemName = scanner.next();
 		String itemBasePriceAsString = scanner.next();
-		String itemTotalPriceAsString = scanner.next();
 		String state = scanner.next();
+		String itemTotalPriceAsString = scanner.next();
 		
 		DataPackage dataPackage = new PriceCalculatorDataPackage(itemName, itemBasePriceAsString, state, itemTotalPriceAsString);
-		scanner.close();
 		return dataPackage;
 	}
 
