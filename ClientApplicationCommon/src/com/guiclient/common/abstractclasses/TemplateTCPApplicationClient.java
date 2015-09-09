@@ -12,7 +12,7 @@ import com.framercommon.interfaces.Framer;
 import com.guiclient.common.beans.ServerDataBean;
 
 
-public abstract class GenericTCPApplicationClient {
+public abstract class TemplateTCPApplicationClient {
 	/**
 	 * the socket for the client to establish a connection to the Server
 	 */
@@ -42,7 +42,7 @@ public abstract class GenericTCPApplicationClient {
 	 */
 	protected com.datapackagecommon.interfaces.DataPackage dataPackage;
 
-	public GenericTCPApplicationClient(ServerDataBean serverDataBean, com.datapackagecommon.interfaces.DataPackage dataPackage){
+	public TemplateTCPApplicationClient(ServerDataBean serverDataBean, com.datapackagecommon.interfaces.DataPackage dataPackage){
 		this.serverDataBean = serverDataBean;
 		this.dataPackage = dataPackage;
 	}
