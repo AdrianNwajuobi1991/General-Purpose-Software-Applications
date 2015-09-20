@@ -94,3 +94,66 @@ int popStackList(StackList_t *stackListPtr){
 	free(current_top_of_stack);
 	return top_of_stack_value;
 }
+
+Queue_t* initQueue(void){
+	Queue_t * QP = (Queue_t*)malloc(sizeof(Queue_t));
+	QP->head_index = 0;
+	QP->tail_index = 0;
+	return QP;
+}
+
+int isEmptyQueue(Queue_t* Queue_Ptr){
+	return (Queue_Ptr ->head_index == Queue_Ptr->tail_index);
+}
+
+void enQueue(Queue_t* Queue_Ptr, int data_to_enqueue){
+	/*
+	 * check tail_index to see if tail_index = MAXQUEUE - 1
+	 */
+	if(Queue_Ptr->tail_index == MAXQUEUE-1){
+		/*
+		 * set tail_index to 0.
+		 */
+		Queue_Ptr->tail_index = 0;
+		return;
+	}
+	/*
+	 * increment for the next slot to enqueue. At this point tail_index is not
+	 * equal to MAXQUEUE-1
+	 */
+	Queue_Ptr->tail_index += 1;
+	/*
+	 * since this is a circular queue, check to see if tail_index = head_index
+	 * if so the queue is full
+	 */
+	if(Queue_Ptr->tail_index == Queue_Ptr->head_index){
+		return;
+	}
+	/*
+	 * queue is not full yet. So add element in tail_index
+	 */
+	Queue_Ptr->QA[Queue_Ptr->tail_index] = data_to_enqueue;
+}
+
+int deQueue(Queue_t* Queue_Ptr){
+	/*
+	 * isEmpty will indicate whether head_index = tail_index.
+	 */
+	if(isEmpty(Queue_Ptr)){
+		exit(1);
+	}
+	/*
+	 * at this point the last element has been dequeued.
+	 * set head to point to the index "just before" the beginning element in the queue
+	 */
+	if(Queue_Ptr->head_index == MAXQUEUE -1){
+		Queue_Ptr->head_index = 0;
+	}else{
+		/*
+		 * increment head_index to the current top element index
+		 */
+		Queue_Ptr->head_index += 1;
+	}
+	return Queue_Ptr->QA[Queue_Ptr->head_index];
+
+}

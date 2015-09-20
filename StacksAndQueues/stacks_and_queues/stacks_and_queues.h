@@ -16,6 +16,8 @@
 #include <stdlib.h>
 
 #define MAXSTACK  50000
+#define MAXQUEUE  50000
+
 #define rouge_value 0xFFFF
 
 typedef struct{
@@ -31,6 +33,12 @@ typedef struct{
 typedef struct{
 	Node *top_of_stack_element;
 }StackList_t;
+
+typedef struct{
+	int head_index;
+	int tail_index;
+	int QA[MAXQUEUE];
+}Queue_t;
 
 /**
  * initStack -- initializes a new empty Stack and returns a pointer to it.
@@ -80,3 +88,33 @@ extern int emptyStackList(StackList_t* stackListPtr);
 extern void pushStackList(StackList_t *stackListPtr, int data_to_push);
 
 extern int popStackList(StackList_t *stackListPtr);
+/*
+ * initQueue -- initializes a new empty queue
+ *
+ * Parameters
+ * 				void
+ * Returns
+ * 				Queue_t* -- a pointer to the initialized Queue.
+ */
+extern Queue_t* initQueue(void);
+/*
+ * isEmptyQueueQueue -- determines whether the given queue is empty or not
+ *
+ * Parameters
+ *				Queue_Ptr -- pointer to a queue
+ * Returns
+ * 				int -- a boolean integer of true or false
+ */
+extern int isEmptyQueue(Queue_t* Queue_Ptr);
+/*
+ * enQueue -- adds an item to a Queue
+ *
+ * Parameters
+ *				Queue_Ptr -- pointer to a queue
+ *				data_to_enqueue -- a data item to add to the queue
+ * Returns
+ * 				void
+ */
+extern void enQueue(Queue_t* Queue_Ptr, int data_to_enqueue);
+
+extern int deQueue(Queue_t* Queue_Ptr);
