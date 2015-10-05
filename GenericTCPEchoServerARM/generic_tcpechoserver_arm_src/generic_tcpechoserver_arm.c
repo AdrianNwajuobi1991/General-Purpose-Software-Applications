@@ -46,12 +46,10 @@ int main(int argc, char*argv[]){
 	}
 	//Initialize the thread pool
 	tpool_init(&server_thread_pool, SERVER_MAX_THREADS, SERVER_MAX_QUEUE, 0);
-
 	puts("Starting server:  Hit return to shutdown");
 	bool running = true; // true if server should continue running
 	fd_set sockSet;      // Set of socket descriptors for select()
 	ClientWorkorder_t *clientWorkOrderPtr; // a pointer to a client work order pointer for a new thread
-	//pthread_t *serverWorkerThreadPtr; //a pointer to a server worker thread
 	while (running) {
 		/* Zero socket descriptor vector and set for server sockets
 	     This must be reset every time select() is called */
@@ -81,19 +79,11 @@ int main(int argc, char*argv[]){
 			for (port = 0; port < noPorts; port++){
 				if (FD_ISSET(servSock[port], &sockSet)) {
 					printf("Request on port %d:  ", port);
+					/*
+					 * create a client work order and add work order to the thread pool
+					 */
 					clientWorkOrderPtr = (ClientWorkorder_t *)malloc(sizeof(ClientWorkorder_t));
 					clientWorkOrderPtr->clientSocket = AcceptTCPConnection(servSock[port]);
-					/*
-					 * spawn a thread to process this request
-					 */
-					/*serverWorkerThreadPtr = (pthread_t *)malloc(sizeof(pthread_t));
-					pthread_create(serverWorkerThreadPtr, NULL, (void *)process_request, (void *)clientWorkOrderPtr);
-					pthread_detach(*serverWorkerThreadPtr);
-					free(serverWorkerThreadPtr);
-					 */
-					/*
-					 * use thread pool to process request: add work to the thread pool
-					 */
 					tpool_add_work(server_thread_pool, (void *)process_request, (void *)clientWorkOrderPtr);
 				}
 			}

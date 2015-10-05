@@ -5,8 +5,8 @@
  *      Author: adrian
  */
 
-#ifndef GENERIC_TCPECHOSERVER_ARM_H_
-#define GENERIC_TCPECHOSERVER_ARM_H_
+#ifndef GENERIC_TCPSERVER_ARM_H_
+#define GENERIC_TCPSERVER_ARM_H_
 
 
 
