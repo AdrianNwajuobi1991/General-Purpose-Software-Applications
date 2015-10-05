@@ -6,15 +6,20 @@
  */
 
 #include "generic_tcpechoserver_arm.h"
+#include "thread_pool_utilities.h"
 #include <pthread.h>
 
-#define DEBUG(fmt, ...) fprintf(stderr, fmt, __VA_ARGS__)
+#define DEBUG(fmt, ...)	fprintf(stderr, fmt, __VA_ARGS__)
+#define SERVER_MAX_THREADS	10
+#define SERVER_MAX_QUEUE	10
+
+static tpool_t server_thread_pool;
 
 typedef struct{
 	int clientSocket;
 }ClientWorkorder_t;
 
-void process_request(ClientWorkorder_t *clientWorkOrderPtr);
+void process_request(void *clientWorkOrderPtr);
 
 int main(int argc, char*argv[]){
 
@@ -39,12 +44,14 @@ int main(int argc, char*argv[]){
 		if (servSock[port] > maxDescriptor)
 			maxDescriptor = servSock[port];
 	}
+	//Initialize the thread pool
+	tpool_init(&server_thread_pool, SERVER_MAX_THREADS, SERVER_MAX_QUEUE, 0);
 
 	puts("Starting server:  Hit return to shutdown");
 	bool running = true; // true if server should continue running
 	fd_set sockSet;      // Set of socket descriptors for select()
 	ClientWorkorder_t *clientWorkOrderPtr; // a pointer to a client work order pointer for a new thread
-	pthread_t *serverWorkerThreadPtr; //a pointer to a server worker thread
+	//pthread_t *serverWorkerThreadPtr; //a pointer to a server worker thread
 	while (running) {
 		/* Zero socket descriptor vector and set for server sockets
 	     This must be reset every time select() is called */
@@ -69,41 +76,44 @@ int main(int argc, char*argv[]){
 				getchar();
 				running = false;
 			}
-
 			// Process connection requests
 			int port;
 			for (port = 0; port < noPorts; port++){
 				if (FD_ISSET(servSock[port], &sockSet)) {
 					printf("Request on port %d:  ", port);
-					//HandleTCPClient(AcceptTCPConnection(servSock[port]));
-					/*
-					 * create and initialize a work order for a server worker thread
-					 */
 					clientWorkOrderPtr = (ClientWorkorder_t *)malloc(sizeof(ClientWorkorder_t));
 					clientWorkOrderPtr->clientSocket = AcceptTCPConnection(servSock[port]);
 					/*
 					 * spawn a thread to process this request
 					 */
-					serverWorkerThreadPtr = (pthread_t *)malloc(sizeof(pthread_t));
+					/*serverWorkerThreadPtr = (pthread_t *)malloc(sizeof(pthread_t));
 					pthread_create(serverWorkerThreadPtr, NULL, (void *)process_request, (void *)clientWorkOrderPtr);
 					pthread_detach(*serverWorkerThreadPtr);
 					free(serverWorkerThreadPtr);
+					 */
+					/*
+					 * use thread pool to process request: add work to the thread pool
+					 */
+					tpool_add_work(server_thread_pool, (void *)process_request, (void *)clientWorkOrderPtr);
 				}
 			}
 		}
 	}
-
+	/*
+	 * destroy the thread pool
+	 */
+	tpool_destroy(server_thread_pool, 1);
 	// Close sockets
 	for (port = 0; port < noPorts; port++)
 		close(servSock[port]);
-
 	exit(0);
 }
 
-void process_request(ClientWorkorder_t *clientWorkOrderPtr){
+void process_request(void *clientWorkOrderPtr){
+	ClientWorkorder_t *clientWorkOrderPtrActual = (ClientWorkorder_t *)clientWorkOrderPtr;
 	unsigned int thread_id = rand() % 65535;
 	DEBUG("in thread id %u\n", thread_id);
-	HandleTCPClient(clientWorkOrderPtr->clientSocket);
+	HandleTCPClient(clientWorkOrderPtrActual->clientSocket);
 	free(clientWorkOrderPtr);
 	DEBUG("completion reached in thread id %u\n", thread_id);
 }
