@@ -14,6 +14,7 @@
 void validate_and_initialize_inputs(int argc);
 void validate_server_socket(int serverSocket);
 void process_input_workorder(HomeAutomationWorkOrder_t *inputWorkOrderPtr, FILE *fd_sock_ptr);
+void clear_input_work_order(HomeAutomationWorkOrder_t *inputWorkOrderPtr);
 
 int main(int argc, char *argv[]){
 	//server parameters
@@ -22,7 +23,6 @@ int main(int argc, char *argv[]){
 	int serverSocket;
 	bool clientStopped;
 	// application parameters
-	HomeAutomationWorkOrder_t *inputWorkOrderPtr = NULL;
 	unsigned int subsystem_identifier;
 	unsigned int endpoint_identifier;
 	unsigned int configuration_value;
@@ -44,15 +44,18 @@ int main(int argc, char *argv[]){
 	clientStopped = false;
 
 	while(clientStopped == false){
+
+		HomeAutomationWorkOrder_t *inputWorkOrderPtr = NULL;
 		/*
-		subsystem_identifier = 10;
-		endpoint_identifier = 12;
-		configuration_value = 14;
+		subsystem_identifier = 3333;
+		endpoint_identifier = 333;
+		configuration_value = 33;
 		strcpy(answer_to_question, "yes");
 		inputWorkOrderPtr = (HomeAutomationWorkOrder_t *)malloc(sizeof(HomeAutomationWorkOrder_t));
 		if(inputWorkOrderPtr == NULL){
 			DieWithUserMessage("malloc() failed", "cannot create a work order request");
 		}
+		clear_input_work_order(inputWorkOrderPtr);
 		inputWorkOrderPtr->subsystem_identifier = subsystem_identifier;
 		inputWorkOrderPtr->endpoint_identifier = endpoint_identifier;
 		inputWorkOrderPtr->configuration_value = configuration_value;
@@ -64,10 +67,7 @@ int main(int argc, char *argv[]){
 			inputWorkOrderPtr->change_configuration = true;
 		}
 		process_input_workorder(inputWorkOrderPtr, fd_sock_ptr);
-		free(inputWorkOrderPtr);
-		clientStopped = true;
-		 */
-
+		free(inputWorkOrderPtr);*/
 		printf("\n\nEnter the subsystem root identifier. To shutdown this application enter the number zero at any of the first"
 				" three prompts in the application(this one included): ");
 		//scanf here to recieve token
@@ -111,6 +111,7 @@ int main(int argc, char *argv[]){
 		if(inputWorkOrderPtr == NULL){
 			DieWithUserMessage("malloc() failed", "cannot create a work order request");
 		}
+		clear_input_work_order(inputWorkOrderPtr);
 		inputWorkOrderPtr->subsystem_identifier = subsystem_identifier;
 		inputWorkOrderPtr->endpoint_identifier = endpoint_identifier;
 		inputWorkOrderPtr->configuration_value = configuration_value;
@@ -123,12 +124,12 @@ int main(int argc, char *argv[]){
 		}
 		process_input_workorder(inputWorkOrderPtr, fd_sock_ptr);
 		free(inputWorkOrderPtr);
-
 	}
 	fputs("client shutting down....\n", stderr);
 	fclose(fd_sock_ptr);
 	//close(serverSocket);
 	exit(0);
+
 }
 
 void validate_and_initialize_inputs(int argc){
@@ -156,10 +157,20 @@ void process_input_workorder(HomeAutomationWorkOrder_t *inputWorkOrderPtr, FILE 
 	printf("sending message to server\n");
 	PutMsg(outBuf, sizeof(outBuf), fd_sock_ptr);
 	printf("successfully sent message\n\n");
+	memset(inputWorkOrderPtr, 0, sizeof(HomeAutomationWorkOrder_t));
 	uint8_t inputBuf[MAX_WIRE_SIZE];
 	GetNextMsg(fd_sock_ptr, inputBuf, MAX_WIRE_SIZE);
 	printf("successfully read from server.\n");
 	printf("beginning decoding sequence.\n");
 	Decode(inputBuf, inputWorkOrderPtr);
 	printf("\nEnd of decoding");
+}
+
+void clear_input_work_order(HomeAutomationWorkOrder_t *inputWorkOrderPtr){
+	inputWorkOrderPtr->configuration_value = 0;
+	inputWorkOrderPtr->endpoint_current_status = 0;
+	inputWorkOrderPtr->subsystem_identifier = 0;
+	inputWorkOrderPtr->endpoint_identifier = 0;
+	inputWorkOrderPtr->change_configuration = false;
+	inputWorkOrderPtr->read_configuration = false;
 }
