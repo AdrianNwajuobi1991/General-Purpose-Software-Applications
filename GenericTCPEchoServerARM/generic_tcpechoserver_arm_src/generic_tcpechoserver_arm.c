@@ -19,7 +19,9 @@ typedef struct{
 	int clientSocket;
 }ClientWorkorder_t;
 
+void HandleTCPClient(int clntSocket);
 void process_request(void *clientWorkOrderPtr);
+
 
 int main(int argc, char*argv[]){
 
@@ -67,7 +69,7 @@ int main(int argc, char*argv[]){
 
 		// Suspend program until descriptor is ready or timeout
 		if (select(maxDescriptor + 1, &sockSet, NULL, NULL, &selTimeout) == 0)
-			printf("No echo requests for %ld secs...Server still alive\n", timeout);
+			printf("No requests for %ld secs...Server still alive\n", timeout);
 		else {
 			if (FD_ISSET(0, &sockSet)) { // Check keyboard
 				puts("Shutting down server");
@@ -99,9 +101,42 @@ int main(int argc, char*argv[]){
 	exit(0);
 }
 
+void HandleTCPClient(int clntSocket) {
+	/* add construct here to prevent server thread from closing connection client prematurely. */
+	FILE *channel = fdopen(clntSocket, "r+");
+	if(channel == NULL){
+		DieWithSystemMessage("fdopen() failed.");
+	}
+	uint8_t inputBuf[MAX_WIRE_SIZE];
+	HomeAutomationWorkOrder_t homeAutomationWorkOrder;
+	while((GetNextMsg(channel, inputBuf, MAX_WIRE_SIZE)) > 0){
+		printf("\nSuccessfully received encoded information from client.\n");
+		memset(&homeAutomationWorkOrder, 0, sizeof(homeAutomationWorkOrder));
+		printf("\nBeginning decoding sequence.\n");
+		Decode(inputBuf, &homeAutomationWorkOrder);
+		printf("\nSuccessfully decoded client work request.\n");
+		/* test data modification step */
+		homeAutomationWorkOrder.endpoint_current_status = 65534;
+		uint8_t outBuf[MAX_WIRE_SIZE];
+		printf("\nbeginning encoding sequence.\n");
+		Encode(&homeAutomationWorkOrder, outBuf);
+		printf("\nsuccessfully encoded client response.\n");
+		if((PutMsg(outBuf, sizeof(outBuf), channel)) < 0){
+			fputs("Error framing/outputting message\n", stderr);
+			break;
+		}
+		fflush(channel);
+		printf("\nsuccessfully sent client response.\n");
+	}
+	puts("closing server-side connection....");
+	fclose(channel);
+	puts("server-side connection closed successfully.");
+}
+
+
 void process_request(void *clientWorkOrderPtr){
 	ClientWorkorder_t *clientWorkOrderPtrActual = (ClientWorkorder_t *)clientWorkOrderPtr;
-	unsigned int thread_id = rand() % 65535;
+	unsigned int thread_id = clientWorkOrderPtrActual->clientSocket;
 	DEBUG("in thread id %u\n", thread_id);
 	HandleTCPClient(clientWorkOrderPtrActual->clientSocket);
 	free(clientWorkOrderPtr);
