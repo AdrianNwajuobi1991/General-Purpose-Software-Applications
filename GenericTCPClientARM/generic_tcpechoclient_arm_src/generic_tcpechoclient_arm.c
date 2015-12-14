@@ -27,24 +27,14 @@ int main(int argc, char *argv[]){
 	unsigned int endpoint_identifier;
 	unsigned int configuration_value;
 	char answer_to_question[7];
-
-	FILE *fd_sock_ptr = NULL;
-
 	validate_and_initialize_inputs(argc);
 	server = argv[1];
 	serverPort = argv[2];
 	serverSocket = SetupTCPClientSocket(server, serverPort);
 	validate_server_socket(serverSocket);
-
-	fd_sock_ptr = fdopen(serverSocket, "r+");
-	if(fd_sock_ptr == NULL){
-		DieWithSystemMessage("fdopen() failed");
-	}
-
 	clientStopped = false;
 
 	while(clientStopped == false){
-
 		HomeAutomationWorkOrder_t *inputWorkOrderPtr = NULL;
 		/*
 		subsystem_identifier = 3333;
@@ -111,6 +101,11 @@ int main(int argc, char *argv[]){
 		if(inputWorkOrderPtr == NULL){
 			DieWithUserMessage("malloc() failed", "cannot create a work order request");
 		}
+		FILE *fd_sock_ptr = NULL;
+		fd_sock_ptr = fdopen(serverSocket, "r+");
+		if(fd_sock_ptr == NULL){
+			DieWithSystemMessage("fdopen() failed");
+		}
 		clear_input_work_order(inputWorkOrderPtr);
 		inputWorkOrderPtr->subsystem_identifier = subsystem_identifier;
 		inputWorkOrderPtr->endpoint_identifier = endpoint_identifier;
@@ -124,9 +119,9 @@ int main(int argc, char *argv[]){
 		}
 		process_input_workorder(inputWorkOrderPtr, fd_sock_ptr);
 		free(inputWorkOrderPtr);
+		fclose(fd_sock_ptr);
 	}
 	fputs("client shutting down....\n", stderr);
-	fclose(fd_sock_ptr);
 	//close(serverSocket);
 	exit(0);
 
