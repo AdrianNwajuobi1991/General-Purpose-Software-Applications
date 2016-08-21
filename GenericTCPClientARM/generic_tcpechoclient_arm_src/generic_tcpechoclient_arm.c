@@ -13,8 +13,8 @@
 
 void validate_and_initialize_inputs(int argc);
 void validate_server_socket(int serverSocket);
-void process_input_workorder(HomeAutomationWorkOrder_t *inputWorkOrderPtr, FILE *fd_sock_ptr);
-void clear_input_work_order(HomeAutomationWorkOrder_t *inputWorkOrderPtr);
+void process_input_workorder(GeneralWorkOrder_t *inputWorkOrderPtr, FILE *fd_sock_ptr);
+void clear_input_work_order(GeneralWorkOrder_t *inputWorkOrderPtr);
 
 int main(int argc, char *argv[]){
 	//server parameters
@@ -30,12 +30,10 @@ int main(int argc, char *argv[]){
 	validate_and_initialize_inputs(argc);
 	server = argv[1];
 	serverPort = argv[2];
-	serverSocket = SetupTCPClientSocket(server, serverPort);
-	validate_server_socket(serverSocket);
 	clientStopped = false;
 
 	while(clientStopped == false){
-		HomeAutomationWorkOrder_t *inputWorkOrderPtr = NULL;
+		GeneralWorkOrder_t *inputWorkOrderPtr = NULL;
 		/*
 		subsystem_identifier = 3333;
 		endpoint_identifier = 333;
@@ -97,10 +95,12 @@ int main(int argc, char *argv[]){
 			clientStopped = true;
 			continue;
 		}
-		inputWorkOrderPtr = (HomeAutomationWorkOrder_t *)malloc(sizeof(HomeAutomationWorkOrder_t));
+		inputWorkOrderPtr = (GeneralWorkOrder_t *)malloc(sizeof(GeneralWorkOrder_t));
 		if(inputWorkOrderPtr == NULL){
 			DieWithUserMessage("malloc() failed", "cannot create a work order request");
 		}
+		serverSocket = SetupTCPClientSocket(server, serverPort);
+		validate_server_socket(serverSocket);
 		FILE *fd_sock_ptr = NULL;
 		fd_sock_ptr = fdopen(serverSocket, "r+");
 		if(fd_sock_ptr == NULL){
@@ -137,7 +137,7 @@ void validate_server_socket(int serverSocket){
 		DieWithUserMessage("SetupTCPClientSocket() failed", "unable to connect");
 }
 
-void process_input_workorder(HomeAutomationWorkOrder_t *inputWorkOrderPtr, FILE *fd_sock_ptr){
+void process_input_workorder(GeneralWorkOrder_t *inputWorkOrderPtr, FILE *fd_sock_ptr){
 	printf("\nyou entered the subsystem identifier as %u\n", inputWorkOrderPtr->subsystem_identifier);
 	printf("you entered the end-point identifier as %u\n", inputWorkOrderPtr->endpoint_identifier);
 	printf("you entered the configuration value as %u\n", inputWorkOrderPtr->configuration_value);
@@ -152,7 +152,7 @@ void process_input_workorder(HomeAutomationWorkOrder_t *inputWorkOrderPtr, FILE 
 	printf("sending message to server\n");
 	PutMsg(outBuf, sizeof(outBuf), fd_sock_ptr);
 	printf("successfully sent message\n\n");
-	memset(inputWorkOrderPtr, 0, sizeof(HomeAutomationWorkOrder_t));
+	memset(inputWorkOrderPtr, 0, sizeof(GeneralWorkOrder_t));
 	uint8_t inputBuf[MAX_WIRE_SIZE];
 	GetNextMsg(fd_sock_ptr, inputBuf, MAX_WIRE_SIZE);
 	printf("successfully read from server.\n");
@@ -161,7 +161,7 @@ void process_input_workorder(HomeAutomationWorkOrder_t *inputWorkOrderPtr, FILE 
 	printf("\nEnd of decoding");
 }
 
-void clear_input_work_order(HomeAutomationWorkOrder_t *inputWorkOrderPtr){
+void clear_input_work_order(GeneralWorkOrder_t *inputWorkOrderPtr){
 	inputWorkOrderPtr->configuration_value = 0;
 	inputWorkOrderPtr->endpoint_current_status = 0;
 	inputWorkOrderPtr->subsystem_identifier = 0;

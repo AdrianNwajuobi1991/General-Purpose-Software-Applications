@@ -23,7 +23,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#define BUFSIZE 512
+#define CLIENT_REQUEST_SIZE 512
 #define MAX_WIRE_SIZE 1000
 #define MAGIC 0x5400
 #define READ_CONFIGURATION_FLAG 0x0200
@@ -39,36 +39,36 @@ typedef struct{
 	uint16_t endpoint_current_status;
 	bool read_configuration;
 	bool change_configuration;
-}HomeAutomationWorkOrder_t;
+}GeneralWorkOrder_t;
 
 typedef struct{
 	uint16_t header;
 	uint16_t endpoint_configuration_setting;
 	uint32_t subsystem_identifier;
 	uint32_t endpoint_indentifier_and_endpoint_current_status;
-}HomeAutomationWorkOrderBinaryEncode_t;
+}GeneralWorkOrderBinaryEncode_t;
 
 int GetNextMsg(FILE *in, uint8_t *buf, size_t bufSize) {
-  uint16_t mSize = 0;
-  uint16_t extra = 0;
+	uint16_t mSize = 0;
+	uint16_t extra = 0;
 
-  if (fread(&mSize, sizeof(uint16_t), 1, in) != 1)
-    return -1;
-  mSize = ntohs(mSize);
-  if (mSize > bufSize) {
-    extra = mSize - bufSize;
-    mSize = bufSize; // Truncate
-  }
-  if (fread(buf, sizeof(uint8_t), mSize, in) != mSize) {
-    fprintf(stderr, "Framing error: expected %d, read less\n", mSize);
-    return -1;
-  }
-  if (extra > 0) { // Message was truncated
-    uint8_t waste[BUFSIZE];
-    fread(waste, sizeof(uint8_t), extra, in); // Try to flush the channel
-    return -(mSize + extra); // Negation of indicated size
-  } else
-    return mSize;
+	if (fread(&mSize, sizeof(uint16_t), 1, in) != 1)
+		return -1;
+	mSize = ntohs(mSize);
+	if (mSize > bufSize) {
+		extra = mSize - bufSize;
+		mSize = bufSize; // Truncate
+	}
+	if (fread(buf, sizeof(uint8_t), mSize, in) != mSize) {
+		fprintf(stderr, "Framing error: expected %d, read less\n", mSize);
+		return -1;
+	}
+	if (extra > 0) { // Message was truncated
+		uint8_t waste[CLIENT_REQUEST_SIZE];
+		fread(waste, sizeof(uint8_t), extra, in); // Try to flush the channel
+		return -(mSize + extra); // Negation of indicated size
+	} else
+		return mSize;
 }
 
 /* Write the given message to the output stream, followed by
@@ -76,19 +76,19 @@ int GetNextMsg(FILE *in, uint8_t *buf, size_t bufSize) {
  * Returns -1 on any error.
  */
 int PutMsg(uint8_t buf[], size_t msgSize, FILE *out) {
-  if (msgSize > UINT16_MAX)
-    return -1;
-  uint16_t payloadSize = htons(msgSize);
-  if ((fwrite(&payloadSize, sizeof(uint16_t), 1, out) != 1) || (fwrite(buf,
-      sizeof(uint8_t), msgSize, out) != msgSize))
-    return -1;
-  fflush(out);
-  return msgSize;
+	if (msgSize > UINT16_MAX)
+		return -1;
+	uint16_t payloadSize = htons(msgSize);
+	if ((fwrite(&payloadSize, sizeof(uint16_t), 1, out) != 1) || (fwrite(buf,
+			sizeof(uint8_t), msgSize, out) != msgSize))
+		return -1;
+	fflush(out);
+	return msgSize;
 }
 
 
-void Decode(uint8_t *inBuf, HomeAutomationWorkOrder_t *inputWorkOrderPtr){
-	HomeAutomationWorkOrderBinaryEncode_t *hawPtr = (HomeAutomationWorkOrderBinaryEncode_t *) inBuf;
+void Decode(uint8_t *inBuf, GeneralWorkOrder_t *inputWorkOrderPtr){
+	GeneralWorkOrderBinaryEncode_t *hawPtr = (GeneralWorkOrderBinaryEncode_t *) inBuf;
 	uint16_t header = ntohs(hawPtr->header);
 	printf("\nheader data in host byte order is %04x", header);
 	inputWorkOrderPtr->read_configuration = header & READ_CONFIGURATION_FLAG;
@@ -110,9 +110,9 @@ void Decode(uint8_t *inBuf, HomeAutomationWorkOrder_t *inputWorkOrderPtr){
 	printf("\nThe subsystem_identifier in host byte order is %04x", inputWorkOrderPtr->subsystem_identifier);
 
 }
-void Encode(HomeAutomationWorkOrder_t *inputWorkOrderPtr, uint8_t *outBuf){
-	HomeAutomationWorkOrderBinaryEncode_t *hawPtr = (HomeAutomationWorkOrderBinaryEncode_t*)outBuf;
-	memset(outBuf, 0, sizeof(HomeAutomationWorkOrderBinaryEncode_t));
+void Encode(GeneralWorkOrder_t *inputWorkOrderPtr, uint8_t *outBuf){
+	GeneralWorkOrderBinaryEncode_t *hawPtr = (GeneralWorkOrderBinaryEncode_t*)outBuf;
+	memset(outBuf, 0, sizeof(GeneralWorkOrderBinaryEncode_t));
 	hawPtr->header = MAGIC;
 	if(inputWorkOrderPtr->read_configuration == true){
 		hawPtr->header |= READ_CONFIGURATION_FLAG;
@@ -148,36 +148,36 @@ void DieWithSystemMessage(const char* msg){
 }
 
 int SetupTCPClientSocket(const char *host, const char *service) {
-  // Tell the system what kind(s) of address info we want
-  struct addrinfo addrCriteria;                   // Criteria for address match
-  memset(&addrCriteria, 0, sizeof(addrCriteria)); // Zero out structure
-  addrCriteria.ai_family = AF_UNSPEC;             // v4 or v6 is OK
-  addrCriteria.ai_socktype = SOCK_STREAM;         // Only streaming sockets
-  addrCriteria.ai_protocol = IPPROTO_TCP;         // Only TCP protocol
+	// Tell the system what kind(s) of address info we want
+	struct addrinfo addrCriteria;                   // Criteria for address match
+	memset(&addrCriteria, 0, sizeof(addrCriteria)); // Zero out structure
+	addrCriteria.ai_family = AF_UNSPEC;             // v4 or v6 is OK
+	addrCriteria.ai_socktype = SOCK_STREAM;         // Only streaming sockets
+	addrCriteria.ai_protocol = IPPROTO_TCP;         // Only TCP protocol
 
-  // Get address(es)
-  struct addrinfo *servAddr; // Holder for returned list of server addrs
-  int rtnVal = getaddrinfo(host, service, &addrCriteria, &servAddr);
-  if (rtnVal != 0)
-    DieWithUserMessage("getaddrinfo() failed", gai_strerror(rtnVal));
+	// Get address(es)
+	struct addrinfo *servAddr; // Holder for returned list of server addrs
+	int rtnVal = getaddrinfo(host, service, &addrCriteria, &servAddr);
+	if (rtnVal != 0)
+		DieWithUserMessage("getaddrinfo() failed", gai_strerror(rtnVal));
 
-  int sock = -1;
-  struct addrinfo *addr;
+	int sock = -1;
+	struct addrinfo *addr;
 
-  for (addr = servAddr; addr != NULL; addr = addr->ai_next) {
-    // Create a reliable, stream socket using TCP
-    sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-    if (sock < 0)
-      continue;  // Socket creation failed; try next address
+	for (addr = servAddr; addr != NULL; addr = addr->ai_next) {
+		// Create a reliable, stream socket using TCP
+		sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+		if (sock < 0)
+			continue;  // Socket creation failed; try next address
 
-    // Establish the connection to the echo server
-    if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
-      break;     // Socket connection succeeded; break and return socket
+		// Establish the connection to the echo server
+		if (connect(sock, addr->ai_addr, addr->ai_addrlen) == 0)
+			break;     // Socket connection succeeded; break and return socket
 
-    close(sock); // Socket connection failed; try next address
-    sock = -1;
-  }
+		close(sock); // Socket connection failed; try next address
+		sock = -1;
+	}
 
-  freeaddrinfo(servAddr); // Free addrinfo allocated in getaddrinfo()
-  return sock;
+	freeaddrinfo(servAddr); // Free addrinfo allocated in getaddrinfo()
+	return sock;
 }

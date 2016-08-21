@@ -7,6 +7,8 @@
 
 #include "generic_tcpechoserver_arm.h"
 #include "thread_pool_utilities.h"
+#include "encode_decode.h"
+#include "framer.h"
 #include <pthread.h>
 
 #define DEBUG(fmt, ...)	fprintf(stderr, fmt, __VA_ARGS__)
@@ -15,13 +17,12 @@
 
 static tpool_t server_thread_pool;
 
+
 typedef struct{
 	int clientSocket;
 }ClientWorkorder_t;
 
-void HandleTCPClient(int clntSocket);
 void process_request(void *clientWorkOrderPtr);
-
 
 int main(int argc, char*argv[]){
 
@@ -48,20 +49,15 @@ int main(int argc, char*argv[]){
 	}
 	//Initialize the thread pool
 	tpool_init(&server_thread_pool, SERVER_MAX_THREADS, SERVER_MAX_QUEUE, 0);
-	puts("Starting server:  Hit return to shutdown");
-	bool running = true; // true if server should continue running
 	fd_set sockSet;      // Set of socket descriptors for select()
 	ClientWorkorder_t *clientWorkOrderPtr; // a pointer to a client work order pointer for a new thread
-	while (running) {
+	while (1) {
 		/* Zero socket descriptor vector and set for server sockets
 	     This must be reset every time select() is called */
 		FD_ZERO(&sockSet);
-		// Add keyboard to descriptor vector
-		FD_SET(STDIN_FILENO, &sockSet);
 		int port;
 		for (port = 0; port < noPorts; port++)
 			FD_SET(servSock[port], &sockSet);
-
 		// Timeout specification; must be reset every time select() is called
 		struct timeval selTimeout;   // Timeout for select()
 		selTimeout.tv_sec = timeout; // Set timeout (secs.)
@@ -71,11 +67,6 @@ int main(int argc, char*argv[]){
 		if (select(maxDescriptor + 1, &sockSet, NULL, NULL, &selTimeout) == 0)
 			printf("No requests for %ld secs...Server still alive\n", timeout);
 		else {
-			if (FD_ISSET(0, &sockSet)) { // Check keyboard
-				puts("Shutting down server");
-				getchar();
-				running = false;
-			}
 			// Process connection requests
 			int port;
 			for (port = 0; port < noPorts; port++){
@@ -90,6 +81,7 @@ int main(int argc, char*argv[]){
 				}
 			}
 		}
+
 	}
 	/*
 	 * destroy the thread pool
@@ -101,44 +93,41 @@ int main(int argc, char*argv[]){
 	exit(0);
 }
 
-void HandleTCPClient(int clntSocket) {
-	/* add construct here to prevent server thread from closing connection client prematurely. */
-	FILE *channel = fdopen(clntSocket, "r+");
-	if(channel == NULL){
-		DieWithSystemMessage("fdopen() failed.");
-	}
-	uint8_t inputBuf[MAX_WIRE_SIZE];
-	HomeAutomationWorkOrder_t homeAutomationWorkOrder;
-	while((GetNextMsg(channel, inputBuf, MAX_WIRE_SIZE)) > 0){
-		printf("\nSuccessfully received encoded information from client.\n");
-		memset(&homeAutomationWorkOrder, 0, sizeof(homeAutomationWorkOrder));
-		printf("\nBeginning decoding sequence.\n");
-		Decode(inputBuf, &homeAutomationWorkOrder);
-		printf("\nSuccessfully decoded client work request.\n");
-		/* test data modification step */
-		homeAutomationWorkOrder.endpoint_current_status = 65534;
-		uint8_t outBuf[MAX_WIRE_SIZE];
-		printf("\nbeginning encoding sequence.\n");
-		Encode(&homeAutomationWorkOrder, outBuf);
-		printf("\nsuccessfully encoded client response.\n");
-		if((PutMsg(outBuf, sizeof(outBuf), channel)) < 0){
-			fputs("Error framing/outputting message\n", stderr);
-			break;
-		}
-		fflush(channel);
-		printf("\nsuccessfully sent client response.\n");
-	}
-	puts("closing server-side connection....");
-	fclose(channel);
-	puts("server-side connection closed successfully.");
-}
-
-
 void process_request(void *clientWorkOrderPtr){
 	ClientWorkorder_t *clientWorkOrderPtrActual = (ClientWorkorder_t *)clientWorkOrderPtr;
-	unsigned int thread_id = clientWorkOrderPtrActual->clientSocket;
-	DEBUG("in thread id %u\n", thread_id);
-	HandleTCPClient(clientWorkOrderPtrActual->clientSocket);
+	unsigned int client_id = clientWorkOrderPtrActual->clientSocket;
+	DEBUG("in thread for client number %u\n", client_id);
+	/* add construct here to prevent server thread from closing connection client prematurely. */
+		FILE *channel = fdopen(client_id, "r+");
+		if(channel == NULL){
+			DieWithSystemMessage("fdopen() failed.");
+		}
+		uint8_t inputBuf[MAX_WIRE_SIZE];
+		GeneralWorkOrder_t homeAutomationWorkOrder;
+		while((GetNextMsg(channel, inputBuf, MAX_WIRE_SIZE)) > 0){
+			printf("\nSuccessfully received encoded information from client.\n");
+			memset(&homeAutomationWorkOrder, 0, sizeof(homeAutomationWorkOrder));
+			printf("\nBeginning decoding sequence.\n");
+			Decode(inputBuf, &homeAutomationWorkOrder);
+			printf("\nSuccessfully decoded client work request.\n");
+			/*
+			 * do main processing logic here
+			 */
+			uint8_t outBuf[MAX_WIRE_SIZE];
+			printf("\nbeginning encoding sequence.\n");
+			Encode(&homeAutomationWorkOrder, outBuf);
+			printf("\nsuccessfully encoded client response.\n");
+			if((PutMsg(outBuf, sizeof(outBuf), channel)) < 0){
+				fputs("Error framing/outputting message\n", stderr);
+				break;
+			}
+			fflush(channel);
+			printf("\nsuccessfully sent client response.\n");
+		}
+		puts("closing server-side connection....");
+		fclose(channel);
+		puts("server-side connection closed successfully.");
 	free(clientWorkOrderPtr);
-	DEBUG("completion reached in thread id %u\n", thread_id);
+	DEBUG("completion reached in thread id %u\n", client_id);
 }
+
