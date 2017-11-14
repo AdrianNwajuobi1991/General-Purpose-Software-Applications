@@ -41,12 +41,8 @@ public class GeoCodingAPIDelegate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(response != null){
-			LOGGER.finer(response);
-			return response;
-		}else{
-			return "blank data";
-		}
+		LOGGER.finer(response);
+		return response;
 	}
 
 }
