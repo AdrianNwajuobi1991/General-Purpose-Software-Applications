@@ -13,6 +13,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -24,19 +25,21 @@ public class StandAloneClient {
 	private static String endpoint="https://maps.googleapis.com/maps/api/geocode/";
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		String result = callGeoCodeAPI(false, "AIzaSyAQjiEf39EeoIjC5h2qEQKtpKdOiVOgeV4", "1600+Amphitheatre+Parkway,+Mountain+View,+CA");
+		Properties prop = new Properties();
+		InputStream input = null;
+		try {
+			input = new FileInputStream("geocode_api_call.properties");
+			prop.load(input);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		String result = callGeoCodeAPI(prop.getProperty("json_or_xml"), prop.getProperty("api_key"), prop.getProperty("address"));
 		System.out.println(result);
 		
 	}
 	
-	private static String callGeoCodeAPI(boolean jsonFlag, String apiKey, String address){
-		String json_or_xml ="json";
+	private static String callGeoCodeAPI(String json_or_xml, String apiKey, String address){
 		String response = "";
-		if(jsonFlag == false){
-			json_or_xml = "xml";
-		}
 		String requestEndpoint=endpoint;
 		requestEndpoint += json_or_xml+"?"+"address="+address+"&key="+apiKey;
 		try {

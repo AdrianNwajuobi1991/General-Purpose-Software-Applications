@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Nov 15, 2017 2:29:47 PM                                                        
+
+     StandAlone_GeocodingAPI_Client    
+     
+                   
+     anwajuobi                                                                
+     ====================================================================== -->
+<project basedir="." default="compile">
+    <description>
+            This is a stand alone GeoCoding API Client
+    </description>
+	
+	<property name="build.dir" value="build"/>
+	<property name="src.dir" value="src"/>
+	<property name="dist.dir" value="dist"/>
+	
+	
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="init" description="creates build and dist directories">
+        <mkdir dir="${build.dir}/classes"/>
+    	<mkdir dir="${dist.dir}"/>
+    </target>
+
+	<target depends="init" description="Removes temporary directories" name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="bin" failonerror="false"/>
+		<delete dir="${dist.dir}" failonerror="false"/>
+	</target>
+	
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="compile" depends="init">
+    	<javac debug="true" destdir="${build.dir}/classes" srcdir="${src.dir}" verbose="true"/>
+    </target>
+
+</project>
