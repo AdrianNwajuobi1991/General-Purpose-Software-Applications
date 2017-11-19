@@ -7,7 +7,7 @@
                    
      anwajuobi                                                                
      ====================================================================== -->
-<project basedir="." default="compile">
+<project basedir="." default="jar">
     <description>
             This is a stand alone GeoCoding API Client
     </description>
@@ -16,6 +16,12 @@
 	<property name="src.dir" value="src"/>
 	<property name="dist.dir" value="dist"/>
 	
+	
+	<propertyfile file="geocode_api_call.properties">
+	  	<entry  key="json_or_xml" value="json"/>
+		<entry  key="api_key" value="AIzaSyAQjiEf39EeoIjC5h2qEQKtpKdOiVOgeV4"/>
+		<entry  key="address" value="1600+Amphitheatre+Parkway,+Mountain+View,+CA"/>
+	</propertyfile>
 	
 
     <!-- ================================= 
@@ -36,7 +42,16 @@
           target: depends                      
          - - - - - - - - - - - - - - - - - -->
     <target name="compile" depends="init">
-    	<javac debug="true" destdir="${build.dir}/classes" srcdir="${src.dir}" verbose="true"/>
+    	<javac debug="true" destdir="${build.dir}/classes"  source="1.8" target="1.8" srcdir="${src.dir}" verbose="true"/>
     </target>
+	
+	<target name="jar" depends="compile">
+		<manifest file = "MANIFEST.MF">
+		   <attribute name = "Main-Class" value = "StandAloneClient"/>
+		   <attribute name = "Class-Path" value = "."/>
+		</manifest>
+		<copy file="geocode_api_call.properties" tofile="${dist.dir}/geocode_api_call.properties"/>
+		<jar destfile="${dist.dir}/StandAlone_GeocodingAPI_Client.jar" basedir="${build.dir}/classes" includes="*.class"  manifest="MANIFEST.MF" />
+	</target>
 
 </project>
