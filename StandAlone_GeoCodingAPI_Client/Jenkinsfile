@@ -7,7 +7,8 @@ node{
 	}
 	
 	stage('build'){
-		bat ant ./StandAlone_GeoCodingAPI_Client/build.xml
+		def antHome = tool 'ant'
+		bat "${antHome}/bin/ant ./StandAlone_GeoCodingAPI_Client/build.xml"
 	}
 	
 }
