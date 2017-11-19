@@ -1,18 +1,15 @@
 #!/usr/bin/env groovy
 
 node{
-	
-	try{
-		
+	try{	
 		stage('checkout'){
-		    checkout scm
+		    echo 'checking out'
 		}
-
-	    
+		
+		stage('build'){
+			echo 'building'
+		}
 	}catch (err) {
-	    
 	    throw err
 	}
-
-
 }
