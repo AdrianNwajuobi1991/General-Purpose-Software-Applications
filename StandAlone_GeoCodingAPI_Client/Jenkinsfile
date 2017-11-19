@@ -7,7 +7,7 @@ node{
 	}
 	
 	stage('build'){
-		echo 'building'
+		bat ant ./StandAlone_GeoCodingAPI_Client/build.xml
 	}
 	
 }
