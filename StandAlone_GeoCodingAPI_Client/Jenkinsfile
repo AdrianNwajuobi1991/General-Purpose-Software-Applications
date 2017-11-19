@@ -3,7 +3,7 @@
 node{
 
 	stage('checkout'){
-	    git url: 'https://github.com/AdrianNwajuobi1991/General-Purpose-Software-Applications/tree/master/StandAlone_GeoCodingAPI_Client'
+	    git url: 'https://github.com/AdrianNwajuobi1991/General-Purpose-Software-Applications.git'
 	}
 	
 	stage('build'){
