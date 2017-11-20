@@ -11,4 +11,8 @@ node{
 		bat "${antHome}/bin/ant -buildfile ./StandAlone_GeoCodingAPI_Client/build.xml"
 	}
 	
+	stage('rudimentary_deploy'){   
+	    bat "copy ./StandAlone_GeoCodingAPI_Client/dist/*.jar C:/Users/anwajuobi/Desktop/local_deployments"
+	}
+
 }
