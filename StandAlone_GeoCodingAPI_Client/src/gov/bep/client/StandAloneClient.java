@@ -1,3 +1,4 @@
+package gov.bep.client;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,7 +39,7 @@ public class StandAloneClient {
 		
 	}
 	
-	private static String callGeoCodeAPI(String json_or_xml, String apiKey, String address){
+	public static String callGeoCodeAPI(String json_or_xml, String apiKey, String address){
 		String response = "";
 		String requestEndpoint=endpoint;
 		requestEndpoint += json_or_xml+"?"+"address="+address+"&key="+apiKey;

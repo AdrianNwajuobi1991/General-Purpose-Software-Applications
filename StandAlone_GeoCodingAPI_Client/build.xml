@@ -15,13 +15,19 @@
 	<property name="build.dir" value="build"/>
 	<property name="src.dir" value="src"/>
 	<property name="dist.dir" value="dist"/>
+	<property name="lib.dir" value="lib"/>
 	
 	
 	<propertyfile file="geocode_api_call.properties">
-	  	<entry  key="json_or_xml" value="json"/>
+	  	<entry  key="json_or_xml" value="xml"/>
 		<entry  key="api_key" value="AIzaSyAQjiEf39EeoIjC5h2qEQKtpKdOiVOgeV4"/>
 		<entry  key="address" value="1600+Amphitheatre+Parkway,+Mountain+View,+CA"/>
 	</propertyfile>
+	
+	<path id="classpath.test"> 
+	  <pathelement location="${build.dir}/classes/gov/bep/client" /> 
+	  <pathelement location="${lib.dir}/junit4.jar"/> 
+	</path>
 	
 
     <!-- ================================= 
@@ -42,16 +48,26 @@
           target: depends                      
          - - - - - - - - - - - - - - - - - -->
     <target name="compile" depends="init">
-    	<javac debug="true" destdir="${build.dir}/classes"  source="1.8" target="1.8" srcdir="${src.dir}" verbose="true"/>
+    	<javac debug="true" destdir="${build.dir}/classes"  source="1.8" target="1.8" srcdir="${src.dir}" verbose="true" classpath="${lib.dir}/*.jar"/>
     </target>
 	
-	<target name="jar" depends="compile">
+	<target name="runtests" depends="compile">
+		<junit printsummary="yes" fork="yes" haltonfailure="yes">
+			<classpath refid="classpath.test"/>
+		  	<formatter type="xml"/>
+			<batchtest>
+		      <fileset dir="${build.dir}/classes/gov/bep/client" includes="StandAloneClientTest" />
+			</batchtest>
+		</junit>
+	</target>
+	
+	<target name="jar" depends="runtests">
 		<manifest file = "MANIFEST.MF">
-		   <attribute name = "Main-Class" value = "StandAloneClient"/>
+		   <attribute name = "Main-Class" value = "gov.bep.client.StandAloneClient"/>
 		   <attribute name = "Class-Path" value = "."/>
 		</manifest>
 		<copy file="geocode_api_call.properties" tofile="${dist.dir}/geocode_api_call.properties"/>
-		<jar destfile="${dist.dir}/StandAlone_GeocodingAPI_Client.jar" basedir="${build.dir}/classes" includes="*.class"  manifest="MANIFEST.MF" />
+		<jar destfile="${dist.dir}/StandAlone_GeocodingAPI_Client.jar" basedir="${build.dir}/classes" includes="**" manifest="MANIFEST.MF" />
 	</target>
 
 </project>
