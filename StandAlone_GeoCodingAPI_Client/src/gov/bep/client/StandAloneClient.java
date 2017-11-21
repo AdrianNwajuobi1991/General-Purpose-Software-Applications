@@ -35,7 +35,7 @@ public class StandAloneClient {
 			ex.printStackTrace();
 		}
 		String result = callGeoCodeAPI(prop.getProperty("json_or_xml"), prop.getProperty("api_key"), prop.getProperty("address"));
-		System.out.println(result+"Test_CHanges");
+		System.out.println(result);
 		
 	}
 	
