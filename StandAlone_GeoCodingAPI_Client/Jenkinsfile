@@ -12,7 +12,7 @@ node{
 	}
 	
 	stage('rudimentary_deploy'){   
-	    bat "copy \"./StandAlone_GeoCodingAPI_Client/dist/*.*\" \"C:\Users\ADRIAN\Desktop\local_deployments\""
+	    bat "copy \"./StandAlone_GeoCodingAPI_Client/dist/*.*\" \"C:/Users/ADRIAN/Desktop/local_deployments\""
 	}
 
 }
