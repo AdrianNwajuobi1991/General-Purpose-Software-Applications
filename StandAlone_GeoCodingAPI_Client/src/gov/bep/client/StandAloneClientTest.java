@@ -12,6 +12,7 @@ public class StandAloneClientTest {
 		String result = StandAloneClient.callGeoCodeAPI("xml", "AIzaSyAQjiEf39EeoIjC5h2qEQKtpKdOiVOgeV4", "9334+Madison+Avenue,+Laurel,+MD,+20723");
 		assertFalse(result.equals("blank data"));
 		assertFalse(result == null);
+		assertTrue(result.length() > 0);
 	}
 
 }
