@@ -12,7 +12,7 @@ node{
 	}
 	
 	stage('Results') {
-      archive './StandAlone_GeoCodingAPI_Client/*.*'
+      archiveArtifacts 'StandAlone_GeoCodingAPI_Client/dist/*.zip'
    }
    
    stage('Publish') {
