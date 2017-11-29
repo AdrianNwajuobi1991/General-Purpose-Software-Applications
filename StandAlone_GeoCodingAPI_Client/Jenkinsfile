@@ -10,4 +10,12 @@ node{
 		def antHome = tool 'ant'
 		bat "${antHome}/bin/ant -buildfile ./StandAlone_GeoCodingAPI_Client/build.xml"
 	}
+	
+	stage('Results') {
+      archive './StandAlone_GeoCodingAPI_Client/*.*'
+   }
+   
+   stage('Publish') {
+        nexusPublisher nexusInstanceId: 'test_nexus_repository_manager_server', nexusRepositoryId: 'test_repo_jenkins', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'jar/target/']], mavenCoordinate: [artifactId: 'standalone-client', groupId: 'gov.bep.demoprojects', packaging: 'zip', version: '1.0']]]
+   } 
 }
