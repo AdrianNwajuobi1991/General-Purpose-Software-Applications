@@ -16,6 +16,6 @@ node{
    }
    
    stage('Publish') {
-        nexusPublisher nexusInstanceId: 'test_nexus_repository_manager_server', nexusRepositoryId: 'test_repo_jenkins', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'StandAlone_GeoCodingAPI_Client/dist/']], mavenCoordinate: [artifactId: 'standalone-client', groupId: 'gov.bep.demoprojects', packaging: 'zip', version: '1.0']]]
+        nexusPublisher nexusInstanceId: 'test_nexus_repository_manager_server', nexusRepositoryId: 'test_repo_jenkins', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'StandAlone_GeoCodingAPI_Client/dist/standalone-client.zip']], mavenCoordinate: [artifactId: 'standalone-client', groupId: 'gov.bep.demoprojects', packaging: 'zip', version: '1.0']]]
    } 
 }
