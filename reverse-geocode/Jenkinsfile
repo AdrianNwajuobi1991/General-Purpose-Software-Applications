@@ -7,12 +7,12 @@ node{
 	}
 	
 	stage('build'){
-		def antHome = tool 'ant'
-		bat "${antHome}/bin/ant -buildfile ./StandAlone_GeoCodingAPI_Client/build.xml"
+		def mvnHome = tool 'm2'
+		bat "${mvnHome}/bin/mvn -buildfile ./reverse-geocode/pom.xml"
 	}
 	
 	stage('Results') {
-      archiveArtifacts 'StandAlone_GeoCodingAPI_Client/dist/*.*'
+      archiveArtifacts './reverse-geocode/target/*.jar'
    }
    
    stage('Publish') {
