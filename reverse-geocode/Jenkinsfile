@@ -9,6 +9,7 @@ node{
 	stage('build'){
 		def mvnHome = tool 'm2'
 		bat 'cd ./reverse-geocode'
+		bat 'pwd'
 		bat "${mvnHome}/bin/mvn package"
 	}
 	
