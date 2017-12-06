@@ -15,7 +15,10 @@ node{
 	}
 	
 	stage('Results') {
-      archiveArtifacts './target/*.jar'
+		dir('./reverse-geocode') {
+		bat 'pwd'
+    		archiveArtifacts 'target/*.jar'
+		}
    }
    
    stage('Publish') {
