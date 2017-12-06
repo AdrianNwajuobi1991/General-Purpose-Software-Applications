@@ -8,7 +8,7 @@ node{
 	
 	stage('build'){
 		def mvnHome = tool 'm2'
-		bat "${mvnHome}/bin/mvn -buildfile ./reverse-geocode/pom.xml"
+		bat "${mvnHome}/bin/mvn -build ./reverse-geocode/pom.xml"
 	}
 	
 	stage('Results') {
